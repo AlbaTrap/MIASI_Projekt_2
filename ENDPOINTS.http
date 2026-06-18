@@ -1,0 +1,37 @@
+### Register
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123"
+}
+
+### Confirm email - wklej token z odpowiedzi register
+GET http://localhost:8080/api/auth/confirm?token=TOKEN
+
+### Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123"
+}
+
+### Fetch demo events
+POST http://localhost:8080/api/admin/events/fetch
+
+### Normalize demo events
+POST http://localhost:8080/api/admin/events/normalize
+
+### List events
+GET http://localhost:8080/api/events
+
+### Add favorite
+POST http://localhost:8080/api/favorites/EVENT_ID
+Authorization: Bearer TOKEN
+
+### Send notification
+POST http://localhost:8080/api/notifications/events/EVENT_ID?channel=EMAIL
+Authorization: Bearer TOKEN

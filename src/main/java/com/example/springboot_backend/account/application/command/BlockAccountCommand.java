@@ -1,0 +1,5 @@
+package com.example.springboot_backend.account.application.command;
+
+import java.util.UUID;
+
+public record BlockAccountCommand(UUID accountId, String reason) { }
