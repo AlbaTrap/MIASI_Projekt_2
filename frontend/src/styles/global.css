@@ -1,0 +1,278 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background:
+    linear-gradient(180deg, rgba(255, 253, 247, 0.78), rgba(248, 246, 240, 0.96)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(75, 35, 59, 0.035) 0,
+      rgba(75, 35, 59, 0.035) 1px,
+      transparent 1px,
+      transparent 22px
+    );
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.15rem, 6vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.02;
+}
+
+h2 {
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+
+h3 {
+  color: var(--color-text);
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+p {
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+code {
+  background: #f6eddf;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-plum);
+  display: block;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+  padding: 0.75rem;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid rgba(0, 124, 122, 0.24);
+  outline-offset: 3px;
+}
+
+.app-button {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 850;
+  justify-content: center;
+  min-height: 2.75rem;
+  overflow-wrap: anywhere;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  width: 100%;
+}
+
+.app-button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.app-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.app-button-primary {
+  background: var(--color-accent);
+  box-shadow: 0 12px 24px rgba(255, 90, 61, 0.22);
+  color: #ffffff;
+}
+
+.app-button-primary:not(:disabled):hover {
+  background: var(--color-accent-strong);
+}
+
+.app-button-secondary {
+  background: rgba(255, 253, 247, 0.82);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.app-button-secondary:not(:disabled):hover {
+  background: #ffffff;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.app-button-danger {
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
+.text-field {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.text-field span,
+.select-field span {
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 850;
+}
+
+.text-field input {
+  background: rgba(255, 253, 247, 0.95);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  min-height: 2.75rem;
+  padding: 0.7rem 0.85rem;
+  width: 100%;
+}
+
+.text-field input::placeholder {
+  color: #88796b;
+}
+
+.text-field input:focus {
+  border-color: var(--color-primary);
+  outline: 3px solid rgba(0, 124, 122, 0.16);
+}
+
+.select-field {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.select-field select {
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--color-text) 50%) calc(100% - 1.1rem) 50% / 0.42rem 0.42rem no-repeat,
+    linear-gradient(135deg, var(--color-text) 50%, transparent 50%) calc(100% - 0.82rem) 50% / 0.42rem 0.42rem no-repeat,
+    rgba(255, 253, 247, 0.95);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  cursor: pointer;
+  min-height: 2.75rem;
+  padding: 0.7rem 2rem 0.7rem 0.85rem;
+  width: 100%;
+}
+
+.select-field select:focus {
+  border-color: var(--color-primary);
+  outline: 3px solid rgba(0, 124, 122, 0.16);
+}
+
+.form-error {
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.form-success {
+  color: var(--color-success);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.hint {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.badge,
+.category-pill {
+  align-self: flex-start;
+  border-radius: var(--radius);
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  padding: 0.45rem 0.65rem;
+}
+
+.category-pill {
+  background: #f5e5d1;
+  border: 1px solid var(--color-border);
+  color: var(--color-plum);
+}
+
+.account-status-ACTIVE,
+.event-status-AVAILABLE,
+.event-status-PUBLISHED {
+  background: var(--color-success);
+  color: #ffffff;
+}
+
+.account-status-PENDING_CONFIRMATION,
+.event-status-UPDATED,
+.event-status-NORMALIZED,
+.event-status-RAW {
+  background: var(--color-date);
+  color: #3d2905;
+}
+
+.account-status-BLOCKED,
+.account-status-DELETED,
+.event-status-CANCELLED,
+.event-status-REJECTED {
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
+.event-status-ARCHIVED,
+.event-status-HIDDEN {
+  background: #77716b;
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
