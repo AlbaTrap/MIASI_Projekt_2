@@ -1,6 +1,6 @@
 package com.example.springboot_backend.favorite.application.service;
 import com.example.springboot_backend.account.application.port.AccountAccessPort;
-import com.example.springboot_backend.event.application.port.EventAvailabilityPort;
+import com.example.springboot_backend.catalog.application.port.EventAvailabilityPort;
 import com.example.springboot_backend.favorite.application.command.*;
 import com.example.springboot_backend.favorite.application.dto.FavoriteEventDto;
 import com.example.springboot_backend.favorite.application.port.FavoriteEventsAccessPort;

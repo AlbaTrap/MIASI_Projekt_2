@@ -1,6 +1,6 @@
 package com.example.springboot_backend.notification.application.service;
 import com.example.springboot_backend.account.application.port.AccountAccessPort;
-import com.example.springboot_backend.event.application.port.EventAvailabilityPort;
+import com.example.springboot_backend.catalog.application.port.EventAvailabilityPort;
 import com.example.springboot_backend.notification.application.dto.InformatorDto;
 import com.example.springboot_backend.notification.domain.event.InformatorCreatedEvent;
 import com.example.springboot_backend.notification.domain.model.Informator;

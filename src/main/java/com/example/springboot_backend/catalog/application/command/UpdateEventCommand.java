@@ -1,0 +1,7 @@
+package com.example.springboot_backend.catalog.application.command;
+
+import java.time.Instant;
+import java.util.UUID;
+
+public record UpdateEventCommand(UUID eventId, String title, String description, String placeName, String city, String address,
+                                 Instant startDate, Instant endDate, String category, String organizerName, String organizerWebsite) { }

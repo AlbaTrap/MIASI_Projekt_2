@@ -1,6 +1,6 @@
 package com.example.springboot_backend.notification.infrastructure.sender;
 import com.example.springboot_backend.account.application.dto.UserContactData;
-import com.example.springboot_backend.event.application.dto.EventSnapshot;
+import com.example.springboot_backend.catalog.application.dto.EventSnapshot;
 import com.example.springboot_backend.notification.domain.model.Notification;
 import com.example.springboot_backend.notification.domain.port.NotificationSender;
 import org.slf4j.Logger;

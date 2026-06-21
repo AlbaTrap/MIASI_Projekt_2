@@ -2,14 +2,21 @@ package com.example.springboot_backend.shared.event;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LoggingDomainEventPublisher implements DomainEventPublisher {
     private static final Logger log = LoggerFactory.getLogger(LoggingDomainEventPublisher.class);
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    public LoggingDomainEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @Override
     public void publish(DomainEvent event) {
         log.info("Domain event published: {} at {}", event.eventName(), event.occurredAt());
+        applicationEventPublisher.publishEvent(event);
     }
 }

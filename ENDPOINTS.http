@@ -1,14 +1,18 @@
+### Home
+GET http://localhost:8080/
+
 ### Register
 POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
   "email": "test@example.com",
-  "password": "Password123"
+  "password": "Haslo123"
 }
 
-### Confirm email - wklej token z odpowiedzi register
-GET http://localhost:8080/api/auth/confirm?token=TOKEN
+### Confirm account
+# Token weź z odpowiedzi rejestracji
+GET http://localhost:8080/api/auth/confirm?token=WKLEJ_TOKEN
 
 ### Login
 POST http://localhost:8080/api/auth/login
@@ -16,22 +20,46 @@ Content-Type: application/json
 
 {
   "email": "test@example.com",
-  "password": "Password123"
+  "password": "Haslo123"
 }
 
-### Fetch demo events
-POST http://localhost:8080/api/admin/events/fetch
+### Fetch raw events from demo scraper
+POST http://localhost:8080/api/admin/import/events/fetch
 
-### Normalize demo events
-POST http://localhost:8080/api/admin/events/normalize
+### Normalize raw events and add them to catalog
+POST http://localhost:8080/api/admin/import/events/normalize
 
-### List events
-GET http://localhost:8080/api/events
+### Rebuild search index from catalog
+POST http://localhost:8080/api/search-index/rebuild
 
-### Add favorite
-POST http://localhost:8080/api/favorites/EVENT_ID
-Authorization: Bearer TOKEN
+### Search events
+GET http://localhost:8080/api/events?phrase=koncert&city=Wrocław&sortBy=DATE&direction=ASC&page=0&size=10
 
-### Send notification
-POST http://localhost:8080/api/notifications/events/EVENT_ID?channel=EMAIL
-Authorization: Bearer TOKEN
+### Get filters
+GET http://localhost:8080/api/events/filters
+
+### Catalog published events
+GET http://localhost:8080/api/catalog/events
+
+### Add manual catalog event as draft
+POST http://localhost:8080/api/admin/events
+Content-Type: application/json
+
+{
+  "title": "Spektakl teatralny",
+  "description": "Opis wydarzenia dodanego przez administratora",
+  "placeName": "Teatr Polski",
+  "city": "Wrocław",
+  "address": "ul. Gabrieli Zapolskiej 3",
+  "startDate": "2026-07-20T18:00:00Z",
+  "endDate": "2026-07-20T20:00:00Z",
+  "category": "TEATR",
+  "organizerName": "Teatr Polski",
+  "organizerWebsite": "https://example.com"
+}
+
+### Publish event
+POST http://localhost:8080/api/admin/events/ID_WYDARZENIA/publish
+
+### Add published event to search index
+POST http://localhost:8080/api/search-index/events/ID_WYDARZENIA
