@@ -5,15 +5,11 @@ type EventStatusBadgeProps = {
 };
 
 const labels: Record<EventStatus, string> = {
-  AVAILABLE: 'Opublikowane',
+  DRAFT: 'Szkic',
   PUBLISHED: 'Opublikowane',
-  UPDATED: 'Zaktualizowane',
   HIDDEN: 'Ukryte',
   CANCELLED: 'Anulowane',
   ARCHIVED: 'Zarchiwizowane',
-  NORMALIZED: 'Znormalizowane',
-  RAW: 'Surowe',
-  REJECTED: 'Odrzucone',
 };
 
 export function EventStatusBadge({ status }: EventStatusBadgeProps) {

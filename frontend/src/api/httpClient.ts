@@ -63,4 +63,4 @@ export async function apiRequest<T>(
   }
 
   return payload.data;
-}
+};

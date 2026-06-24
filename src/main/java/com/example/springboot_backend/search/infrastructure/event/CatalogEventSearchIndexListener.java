@@ -37,4 +37,9 @@ public class CatalogEventSearchIndexListener {
     public void on(EventArchivedEvent event) {
         indexService.removeFromIndex(event.eventId());
     }
+
+    @EventListener
+    public void on(EventDeletedEvent event) {
+        indexService.removeFromIndex(event.eventId());
+    }
 }

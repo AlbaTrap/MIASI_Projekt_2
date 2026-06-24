@@ -3,7 +3,9 @@ import {
   PropsWithChildren,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -49,12 +51,47 @@ const persistSession = (session: UserSession | null) => {
 };
 
 export function AuthProvider({ children }: PropsWithChildren) {
-  const [session, setSession] = useState<UserSession | null>(() => readStoredSession());
+  const initialAccessToken = useRef<string | null>(null);
+  const [session, setSession] = useState<UserSession | null>(() => {
+    const storedSession = readStoredSession();
+    initialAccessToken.current = storedSession?.accessToken ?? null;
+    return storedSession;
+  });
 
   const updateSession = useCallback((nextSession: UserSession | null) => {
     setSession(nextSession);
     persistSession(nextSession);
   }, []);
+
+  useEffect(() => {
+    const accessToken = initialAccessToken.current;
+
+    if (!accessToken) {
+      return;
+    }
+
+    let active = true;
+
+    const refreshStoredSession = async () => {
+      try {
+        const response = await accountApi.refresh(accessToken);
+
+        if (active) {
+          updateSession(mapLoginResponse(response));
+        }
+      } catch {
+        if (active) {
+          updateSession(null);
+        }
+      }
+    };
+
+    void refreshStoredSession();
+
+    return () => {
+      active = false;
+    };
+  }, [updateSession]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -67,11 +104,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const logout = useCallback(async () => {
-    if (session?.accessToken) {
-      await accountApi.logout(session.accessToken);
+    try {
+      if (session?.accessToken) {
+        await accountApi.logout(session.accessToken);
+      }
+    } finally {
+      updateSession(null);
     }
-
-    updateSession(null);
   }, [session?.accessToken, updateSession]);
 
   const refreshSession = useCallback(async () => {

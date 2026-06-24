@@ -8,6 +8,7 @@ export type UserAccount = {
   status: AccountStatus;
   registeredAt: string;
   activatedAt: string | null;
+  phoneNumber: string | null;
 };
 
 export type UserSession = {

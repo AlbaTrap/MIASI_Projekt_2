@@ -41,7 +41,7 @@ public class DatabaseUserAccountRepository implements UserAccountRepository {
         VerificationToken vt = account.verificationToken();
         return new JpaUserAccountEntity(
                 account.id().value(), account.email().value(), account.passwordHash().value(), account.status(),
-                account.registeredAt(), account.activatedAt(), vt == null ? null : vt.value(), vt == null ? null : vt.expiresAt());
+                account.registeredAt(), account.activatedAt(), vt == null ? null : vt.value(), vt == null ? null : vt.expiresAt(), account.phoneNumber());
     }
 
     private UserAccount toDomain(JpaUserAccountEntity entity) {
@@ -49,6 +49,6 @@ public class DatabaseUserAccountRepository implements UserAccountRepository {
                 new VerificationToken(entity.getVerificationToken(), entity.getVerificationTokenExpiresAt());
         return new UserAccount(UserAccountId.of(entity.getId()), EmailAddress.of(entity.getEmail()),
                 PasswordHash.of(entity.getPasswordHash()), entity.getStatus(), entity.getRegisteredAt(),
-                entity.getActivatedAt(), vt);
+                entity.getActivatedAt(), vt, entity.getPhoneNumber());
     }
 }

@@ -7,6 +7,7 @@ export const mapUserDto = (dto: UserDto): UserAccount => ({
   status: dto.status,
   registeredAt: dto.registeredAt,
   activatedAt: dto.activatedAt,
+  phoneNumber: dto.phoneNumber,
 });
 
 export const mapLoginResponse = (dto: LoginResponseDto): UserSession => ({

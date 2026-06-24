@@ -3,8 +3,8 @@ import com.example.springboot_backend.event.domain.model.EventSource;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
-@Entity
-@Table(name = "raw_events")
+@Entity(name = "EventRawEventEntity")
+@Table(name = "event_raw_events")
 public class JpaRawEventEntity {
     @Id private UUID id;
     @Enumerated(EnumType.STRING) private EventSource source;

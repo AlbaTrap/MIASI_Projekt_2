@@ -2,6 +2,7 @@ import { AppButton } from '../../components/ui/AppButton';
 import { AppTextInput } from '../../components/ui/AppTextInput';
 import { SearchSortDirection, SearchSortField } from '../../types/events';
 import { isDateInputValid } from '../../utils/date';
+import { formatCategoryLabel } from '../../utils/eventLabels';
 
 type SortOption = {
   label: string;
@@ -28,14 +29,12 @@ type CatalogFilterPanelProps = {
   dateTo: string;
   idPrefix: string;
   location: string;
-  selectedLocations: string[];
   sortField: SearchSortField;
   sortDirection: SearchSortDirection;
   onCategoryChange: (value: string) => void;
   onDateFromChange: (value: string) => void;
   onDateToChange: (value: string) => void;
   onLocationChange: (value: string) => void;
-  onSelectedLocationsChange: (value: string[]) => void;
   onSortChange: (field: SearchSortField, direction: SearchSortDirection) => void;
   onClearFilters: () => void;
 };
@@ -48,22 +47,16 @@ export function CatalogFilterPanel({
   dateTo,
   idPrefix,
   location,
-  selectedLocations,
   sortField,
   sortDirection,
   onCategoryChange,
   onDateFromChange,
   onDateToChange,
   onLocationChange,
-  onSelectedLocationsChange,
   onSortChange,
   onClearFilters,
 }: CatalogFilterPanelProps) {
   const currentSortValue = `${sortField}:${sortDirection}`;
-  const selectedLocationSummary =
-    selectedLocations.length === 0
-      ? 'Wybierz lokalizacje'
-      : `${selectedLocations.length} wybrano`;
 
   const handleSortValueChange = (value: string) => {
     const option = sortOptions.find((item) => getSortOptionValue(item) === value);
@@ -71,15 +64,6 @@ export function CatalogFilterPanel({
     if (option) {
       onSortChange(option.field, option.direction);
     }
-  };
-
-  const handleLocationToggle = (value: string) => {
-    if (selectedLocations.includes(value)) {
-      onSelectedLocationsChange(selectedLocations.filter((item) => item !== value));
-      return;
-    }
-
-    onSelectedLocationsChange([...selectedLocations, value]);
   };
 
   return (
@@ -96,7 +80,7 @@ export function CatalogFilterPanel({
           {availableCategories.map((item) => (
             <FilterChip
               key={item}
-              label={item}
+              label={formatCategoryLabel(item)}
               selected={category === item}
               onClick={() => onCategoryChange(item)}
             />
@@ -123,36 +107,21 @@ export function CatalogFilterPanel({
         />
       </div>
 
-      <AppTextInput
-        id={`${idPrefix}-location`}
-        label="Lokalizacja"
-        onChange={(event) => onLocationChange(event.target.value)}
-        placeholder="Miejsce lub ulica"
-        value={location}
-      />
-
-      <div className="filter-group">
-        <h3>Dostępne lokalizacje</h3>
-        <details className="dropdown-panel">
-          <summary>{selectedLocationSummary}</summary>
-          <div className="dropdown-content">
-            {availableLocations.length > 0 ? (
-              availableLocations.map((item) => (
-                <label className="checkbox-option" key={item}>
-                  <input
-                    checked={selectedLocations.includes(item)}
-                    onChange={() => handleLocationToggle(item)}
-                    type="checkbox"
-                  />
-                  <span>{item}</span>
-                </label>
-              ))
-            ) : (
-              <p className="hint">Lokalizacje pojawią się po pobraniu wydarzeń.</p>
-            )}
-          </div>
-        </details>
-      </div>
+      <label className="select-field" htmlFor={`${idPrefix}-location`}>
+        <span>Dostępne lokalizacje</span>
+        <select
+          id={`${idPrefix}-location`}
+          onChange={(event) => onLocationChange(event.target.value)}
+          value={location}
+        >
+          <option value="">Wszystkie lokalizacje</option>
+          {availableLocations.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <label className="select-field" htmlFor={`${idPrefix}-sort`}>
         <span>Sortuj</span>

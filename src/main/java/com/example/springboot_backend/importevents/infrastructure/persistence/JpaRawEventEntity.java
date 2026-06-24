@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
-@Table(name = "raw_events")
+@Entity(name = "ImportRawEventEntity")
+@Table(name = "import_raw_events")
 public class JpaRawEventEntity {
     @Id private UUID id;
     @Enumerated(EnumType.STRING) private ImportSource source;

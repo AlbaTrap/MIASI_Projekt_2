@@ -28,7 +28,7 @@ public class EventUpdateService {
     public CatalogEventDto updateEvent(UpdateEventCommand c) {
         CatalogEvent event = repository.findById(CatalogEventId.of(c.eventId())).orElseThrow(() -> new NotFoundException("Wydarzenie nie istnieje"));
         event.update(new EventName(c.title()), new EventDescription(c.description()), new EventDate(c.startDate(), c.endDate()),
-                Location.of(c.city(), c.address()), EventCategory.fromText(c.category()), new Organizer(c.organizerName(), c.organizerWebsite()));
+                Location.of(c.city(), c.placeName(), c.address()), EventCategory.fromText(c.category()), new Organizer(c.organizerName(), c.organizerWebsite()));
         validator.validate(event);
         CatalogEvent saved = repository.save(event);
         publisher.publish(new EventUpdatedEvent(saved.id().value(), Instant.now()));

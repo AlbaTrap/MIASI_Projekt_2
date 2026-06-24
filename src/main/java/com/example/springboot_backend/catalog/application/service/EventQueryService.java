@@ -24,6 +24,10 @@ public class EventQueryService implements EventAvailabilityPort, CatalogEventsFo
         return repository.findById(CatalogEventId.of(id)).map(CatalogEventMapper::toDto).orElseThrow(() -> new NotFoundException("Wydarzenie nie istnieje"));
     }
     @Transactional(readOnly = true)
+    public CatalogEventDto getPublicEvent(UUID id) {
+        return repository.findById(CatalogEventId.of(id)).filter(e -> e.status() != EventStatus.DRAFT && e.status() != EventStatus.HIDDEN).map(CatalogEventMapper::toDto).orElseThrow(() -> new NotFoundException("Wydarzenie nie istnieje albo nie jest dostępne"));
+    }
+    @Transactional(readOnly = true)
     public boolean eventExists(UUID id) { return repository.existsById(CatalogEventId.of(id)); }
     @Transactional(readOnly = true)
     public String getEventStatus(UUID id) { return getEvent(id).status().name(); }
@@ -38,6 +42,11 @@ public class EventQueryService implements EventAvailabilityPort, CatalogEventsFo
     @Transactional(readOnly = true)
     public Optional<EventSnapshot> getEventDetails(UUID eventId) {
         return repository.findById(CatalogEventId.of(eventId)).filter(e -> e.status() == EventStatus.PUBLISHED).map(CatalogEventMapper::toSnapshot);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<CatalogEventDto> getFavoriteEventDetails(UUID eventId) {
+        return repository.findById(CatalogEventId.of(eventId)).filter(e -> e.status() == EventStatus.PUBLISHED || e.status() == EventStatus.CANCELLED || e.status() == EventStatus.ARCHIVED).map(CatalogEventMapper::toDto);
     }
     @Override
     @Transactional(readOnly = true)

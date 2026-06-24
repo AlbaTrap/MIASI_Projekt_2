@@ -22,7 +22,7 @@ public class SearchEventsService {
     private SearchQuery toDomain(SearchEventsQuery q) {
         SortField field = parseSortField(q.sortBy());
         SortDirection direction = "DESC".equalsIgnoreCase(q.direction()) || "MALEJACO".equalsIgnoreCase(q.direction()) ? SortDirection.DESC : SortDirection.ASC;
-        return new SearchQuery(new SearchPhrase(q.phrase()), new SearchCriteria(q.category(), new DateRange(q.from(), q.to()), q.city(), "PUBLISHED"), new Sorting(field, direction), new Pagination(q.page(), q.size()));
+        return new SearchQuery(new SearchPhrase(q.phrase()), new SearchCriteria(q.category(), new DateRange(q.from(), q.to()), q.location(), "PUBLISHED"), new Sorting(field, direction), new Pagination(q.page(), q.size()));
     }
     private SortField parseSortField(String sortBy) {
         if (sortBy == null) return SortField.DATE;

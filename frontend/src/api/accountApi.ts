@@ -1,5 +1,6 @@
 import {
   ChangePasswordRequest,
+  ChangePhoneNumberRequest,
   LoginRequest,
   LoginResponseDto,
   RegisterRequest,
@@ -51,6 +52,14 @@ export const accountApi = {
 
   changePassword(token: string, request: ChangePasswordRequest) {
     return apiRequest<null>('/account/password', {
+      method: 'PUT',
+      token,
+      body: request,
+    });
+  },
+
+  changePhoneNumber(token: string, request: ChangePhoneNumberRequest) {
+    return apiRequest<null>('/account/phone-number', {
       method: 'PUT',
       token,
       body: request,

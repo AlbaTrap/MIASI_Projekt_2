@@ -9,7 +9,8 @@ public final class CatalogEventMapper {
     public static CatalogEventDto toDto(CatalogEvent e) {
         return new CatalogEventDto(
                 e.id().value(), e.name().value(), e.description().value(), e.location().placeName(), e.location().city(), e.location().addressText(),
-                e.date().start(), e.date().end(), e.category(), e.organizer().name(), e.source().type(), e.status()
+                e.date().start(), e.date().end(), e.category(), e.organizer().name(), e.source().type(), e.status(),
+                e.createdAt(), e.updatedAt(), e.cancelReason()
         );
     }
     public static EventSnapshot toSnapshot(CatalogEvent e) {

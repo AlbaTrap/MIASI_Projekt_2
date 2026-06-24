@@ -7,23 +7,14 @@ type EventLifecyclePresentation = {
   notice?: string;
 };
 
-const catalogVisibleStatuses = new Set<EventStatus>(['AVAILABLE', 'PUBLISHED', 'UPDATED']);
-const savedVisibleStatuses = new Set<EventStatus>([
-  'AVAILABLE',
-  'PUBLISHED',
-  'UPDATED',
-  'CANCELLED',
-  'ARCHIVED',
-]);
+export const isVisibleInCatalog = (event: CatalogEvent) => event.status === 'PUBLISHED';
 
-export const isVisibleInCatalog = (event: CatalogEvent) => catalogVisibleStatuses.has(event.status);
+export const isVisibleInSavedEvents = (event: CatalogEvent) =>
+  event.status === 'PUBLISHED' || event.status === 'CANCELLED' || event.status === 'ARCHIVED';
 
-export const isVisibleInSavedEvents = (event: CatalogEvent) => savedVisibleStatuses.has(event.status);
+export const isUnavailableForUser = (status: EventStatus) => status === 'DRAFT' || status === 'HIDDEN';
 
-export const getEventLifecyclePresentation = (
-  status: EventStatus,
-  updateNotice?: string,
-): EventLifecyclePresentation => {
+export const getEventLifecyclePresentation = (status?: EventStatus): EventLifecyclePresentation => {
   if (status === 'CANCELLED') {
     return {
       label: 'ANULOWANE',
@@ -42,12 +33,21 @@ export const getEventLifecyclePresentation = (
     };
   }
 
-  if (status === 'UPDATED') {
+  if (status === 'DRAFT') {
     return {
-      label: 'ZAKTUALIZOWANE',
-      className: 'event-lifecycle-updated',
+      label: 'SZKIC',
+      className: 'event-lifecycle-hidden',
       visualTone: 'normal',
-      notice: updateNotice || 'Opis wydarzenia został zaktualizowany.',
+      notice: 'To wydarzenie nie jest jeszcze opublikowane.',
+    };
+  }
+
+  if (status === 'HIDDEN') {
+    return {
+      label: 'UKRYTE',
+      className: 'event-lifecycle-hidden',
+      visualTone: 'normal',
+      notice: 'To wydarzenie nie jest dostępne.',
     };
   }
 

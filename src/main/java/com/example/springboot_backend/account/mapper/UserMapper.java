@@ -7,6 +7,6 @@ public final class UserMapper {
     private UserMapper() {}
 
     public static UserDto toDto(UserAccount account) {
-        return new UserDto(account.id().value(), account.email().value(), account.status(), account.registeredAt(), account.activatedAt());
+        return new UserDto(account.id().value(), account.email().value(), account.status(), account.registeredAt(), account.activatedAt(), account.phoneNumber());
     }
 }

@@ -240,25 +240,36 @@ summary:focus-visible {
 }
 
 .account-status-ACTIVE,
-.event-status-AVAILABLE,
 .event-status-PUBLISHED {
   background: var(--color-success);
   color: #ffffff;
 }
 
 .account-status-PENDING_CONFIRMATION,
-.event-status-UPDATED,
-.event-status-NORMALIZED,
-.event-status-RAW {
+.event-status-DRAFT {
   background: var(--color-date);
   color: #3d2905;
 }
 
 .account-status-BLOCKED,
 .account-status-DELETED,
-.event-status-CANCELLED,
-.event-status-REJECTED {
+.event-status-CANCELLED {
   background: var(--color-danger);
+  color: #ffffff;
+}
+
+.notification-status-FAILED {
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
+.notification-status-CREATED {
+  background: var(--color-date);
+  color: #3d2905;
+}
+
+.notification-status-SENT {
+  background: var(--color-success);
   color: #ffffff;
 }
 

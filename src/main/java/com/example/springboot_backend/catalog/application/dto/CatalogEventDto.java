@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public record CatalogEventDto(UUID id, String title, String description, String placeName, String city, String address,
                               Instant startDate, Instant endDate, EventCategory category, String organizerName,
-                              SourceType sourceType, EventStatus status) { }
+                              SourceType sourceType, EventStatus status, Instant createdAt, Instant updatedAt,
+                              String cancelReason) { }

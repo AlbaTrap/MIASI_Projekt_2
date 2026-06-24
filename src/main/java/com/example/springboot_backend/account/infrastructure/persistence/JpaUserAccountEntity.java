@@ -22,12 +22,13 @@ public class JpaUserAccountEntity {
     private Instant activatedAt;
     private String verificationToken;
     private Instant verificationTokenExpiresAt;
+    private String phoneNumber;
 
     protected JpaUserAccountEntity() {}
 
     public JpaUserAccountEntity(UUID id, String email, String passwordHash, AccountStatus status,
                                 Instant registeredAt, Instant activatedAt, String verificationToken,
-                                Instant verificationTokenExpiresAt) {
+                                Instant verificationTokenExpiresAt, String phoneNumber) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -36,6 +37,7 @@ public class JpaUserAccountEntity {
         this.activatedAt = activatedAt;
         this.verificationToken = verificationToken;
         this.verificationTokenExpiresAt = verificationTokenExpiresAt;
+        this.phoneNumber = phoneNumber;
     }
 
     public UUID getId() { return id; }
@@ -46,4 +48,5 @@ public class JpaUserAccountEntity {
     public Instant getActivatedAt() { return activatedAt; }
     public String getVerificationToken() { return verificationToken; }
     public Instant getVerificationTokenExpiresAt() { return verificationTokenExpiresAt; }
+    public String getPhoneNumber() { return phoneNumber; }
 }

@@ -1,5 +1,6 @@
 package com.example.springboot_backend.favorite.application.service;
 import com.example.springboot_backend.account.application.port.AccountAccessPort;
+import com.example.springboot_backend.catalog.application.dto.CatalogEventDto;
 import com.example.springboot_backend.catalog.application.port.EventAvailabilityPort;
 import com.example.springboot_backend.favorite.application.command.*;
 import com.example.springboot_backend.favorite.application.dto.FavoriteEventDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -50,6 +52,11 @@ public class FavoriteEventApplicationService implements FavoriteEventsAccessPort
     public List<FavoriteEventDto> mine(String accessToken) {
         UUID userId = accountAccessPort.findAccountIdByAccessToken(accessToken).orElseThrow(() -> new UnauthorizedException("Zaloguj się"));
         return favoriteRepository.findByUserId(userId).stream().map(FavoriteMapper::toDto).toList();
+    }
+    @Transactional(readOnly = true)
+    public List<CatalogEventDto> events(String accessToken) {
+        UUID userId = accountAccessPort.findAccountIdByAccessToken(accessToken).orElseThrow(() -> new UnauthorizedException("Zaloguj się"));
+        return favoriteRepository.findByUserId(userId).stream().map(FavoriteEvent::eventId).map(eventAvailabilityPort::getFavoriteEventDetails).flatMap(Optional::stream).toList();
     }
     @Override
     @Transactional(readOnly = true)

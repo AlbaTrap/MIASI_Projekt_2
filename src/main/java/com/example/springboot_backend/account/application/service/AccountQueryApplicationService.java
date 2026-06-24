@@ -47,6 +47,6 @@ public class AccountQueryApplicationService implements AccountAccessPort {
     public Optional<UserContactData> getUserContactData(UUID userId) {
         return accountRepository.findById(UserAccountId.of(userId))
                 .filter(a -> a.active())
-                .map(a -> new UserContactData(a.id().value(), a.email().value(), null));
+                .map(a -> new UserContactData(a.id().value(), a.email().value(), a.phoneNumber()));
     }
 }

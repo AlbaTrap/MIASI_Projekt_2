@@ -4,7 +4,7 @@ import com.example.springboot_backend.event.domain.repository.RawEventRepository
 import com.example.springboot_backend.event.domain.valueobject.RawEventId;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-@Repository
+@Repository("eventRawEventRepository")
 public class DatabaseRawEventRepository implements RawEventRepository {
     private final SpringDataJpaRawEventRepository repository;
     public DatabaseRawEventRepository(SpringDataJpaRawEventRepository repository) { this.repository = repository; }

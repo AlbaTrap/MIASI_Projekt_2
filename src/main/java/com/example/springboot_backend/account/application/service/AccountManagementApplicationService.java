@@ -2,6 +2,7 @@ package com.example.springboot_backend.account.application.service;
 
 import com.example.springboot_backend.account.application.command.BlockAccountCommand;
 import com.example.springboot_backend.account.application.command.ChangePasswordCommand;
+import com.example.springboot_backend.account.application.command.ChangePhoneNumberCommand;
 import com.example.springboot_backend.account.application.command.DeleteAccountCommand;
 import com.example.springboot_backend.account.domain.event.AccountBlockedEvent;
 import com.example.springboot_backend.account.domain.event.AccountDeletedEvent;
@@ -55,6 +56,16 @@ public class AccountManagementApplicationService {
         accountRepository.save(account);
         sessionRepository.invalidateSessionsOfAccount(account.id());
         eventPublisher.publish(new PasswordChangedEvent(account.id().value(), Instant.now()));
+    }
+
+    @Transactional
+    public void changePhoneNumber(ChangePhoneNumberCommand command) {
+        var accountId = authenticationService.findAccountIdByToken(command.accessToken())
+                .orElseThrow(() -> new UnauthorizedException("Brak poprawnej sesji"));
+        UserAccount account = accountRepository.findById(UserAccountId.of(accountId))
+                .orElseThrow(() -> new NotFoundException("Konto nie istnieje"));
+        account.changePhoneNumber(command.phoneNumber());
+        accountRepository.save(account);
     }
 
     @Transactional

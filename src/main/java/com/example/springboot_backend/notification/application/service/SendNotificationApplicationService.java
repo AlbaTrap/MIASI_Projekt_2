@@ -10,8 +10,10 @@ import com.example.springboot_backend.notification.domain.port.NotificationSende
 import com.example.springboot_backend.notification.domain.repository.NotificationRepository;
 import com.example.springboot_backend.notification.domain.service.NotificationContentFactory;
 import com.example.springboot_backend.notification.domain.service.NotificationPolicy;
+import com.example.springboot_backend.notification.domain.valueobject.NotificationChannel;
 import com.example.springboot_backend.notification.mapper.NotificationMapper;
 import com.example.springboot_backend.shared.event.DomainEventPublisher;
+import com.example.springboot_backend.shared.exception.BusinessException;
 import com.example.springboot_backend.shared.exception.NotFoundException;
 import com.example.springboot_backend.shared.exception.UnauthorizedException;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,7 @@ public class SendNotificationApplicationService {
         var event = eventAvailabilityPort.getEventDetails(command.eventId()).orElseThrow(() -> new NotFoundException("Wydarzenie nie istnieje albo nie jest dostępne"));
         policy.checkCanSend(favoriteEventsAccessPort.isFavorite(userId, command.eventId()), true);
         var channel = channelService.choose(command.channel());
+        if (channel == NotificationChannel.SMS && (contact.phoneNumber() == null || contact.phoneNumber().isBlank())) throw new BusinessException("Powiadomienia SMS nie są dostępne bez numeru telefonu");
         Notification notification = Notification.create(userId, command.eventId(), channel, contentFactory.create(event, channel));
         notification = notificationRepository.save(notification);
         publisher.publish(new NotificationCreatedEvent(notification.id().value(), userId, command.eventId(), channel.name(), Instant.now()));

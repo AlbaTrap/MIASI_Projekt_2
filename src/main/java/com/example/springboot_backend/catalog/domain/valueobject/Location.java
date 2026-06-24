@@ -8,6 +8,9 @@ public record Location(String placeName, Address address, Coordinates coordinate
     public static Location of(String city, String streetAndNumber) {
         return new Location(streetAndNumber, new Address(streetAndNumber, "", city), null);
     }
+    public static Location of(String city, String placeName, String streetAndNumber) {
+        return new Location(placeName, new Address(streetAndNumber, "", city), null);
+    }
     public boolean isInWroclaw() {
         String city = address.city();
         return city != null && (city.equalsIgnoreCase("Wrocław") || city.equalsIgnoreCase("Wroclaw"));

@@ -32,6 +32,7 @@ export type UserDto = {
   status: 'PENDING_CONFIRMATION' | 'ACTIVE' | 'BLOCKED' | 'DELETED';
   registeredAt: string;
   activatedAt: string | null;
+  phoneNumber: string | null;
 };
 
 export type ChangePasswordRequest = {
@@ -39,26 +40,49 @@ export type ChangePasswordRequest = {
   newPassword: string;
 };
 
-export type EventDto = {
+export type ChangePhoneNumberRequest = {
+  phoneNumber: string;
+};
+
+export type CatalogEventStatus = 'DRAFT' | 'PUBLISHED' | 'HIDDEN' | 'CANCELLED' | 'ARCHIVED';
+
+export type SearchResultDto = {
+  eventId: string;
+  title: string;
+  shortDescription: string;
+  startDate: string;
+  location: string;
+  category: string;
+};
+
+export type SearchResultsListDto = {
+  results: SearchResultDto[];
+  totalResults: number;
+  pageNumber: number;
+  pageSize: number;
+};
+
+export type FilterOptionsDto = {
+  categories: string[];
+  locations: string[];
+};
+
+export type CatalogEventDto = {
   id: string;
   title: string;
   description: string;
+  placeName: string;
   city: string;
   address: string;
   startDate: string;
   endDate: string | null;
   category: string;
-  status:
-    | 'RAW'
-    | 'NORMALIZED'
-    | 'AVAILABLE'
-    | 'REJECTED'
-    | 'PUBLISHED'
-    | 'UPDATED'
-    | 'HIDDEN'
-    | 'CANCELLED'
-    | 'ARCHIVED';
-  updateNotice?: string;
+  organizerName: string;
+  sourceType: string;
+  status: CatalogEventStatus;
+  createdAt: string;
+  updatedAt: string;
+  cancelReason: string | null;
 };
 
 export type FavoriteEventDto = {
@@ -66,4 +90,30 @@ export type FavoriteEventDto = {
   userId: string;
   eventId: string;
   addedAt: string;
+};
+
+export type NotificationChannel = 'EMAIL' | 'SMS';
+
+export type NotificationStatus = 'CREATED' | 'SENT' | 'FAILED';
+
+export type NotificationDto = {
+  id: string;
+  userId: string;
+  eventId: string;
+  channel: NotificationChannel;
+  status: NotificationStatus;
+  subject: string;
+  message: string;
+  createdAt: string;
+  sentAt: string | null;
+  failureReason: string | null;
+};
+
+export type InformatorDto = {
+  id: string;
+  userId: string;
+  eventId: string;
+  notificationId: string;
+  message: string;
+  createdAt: string;
 };

@@ -1,36 +1,63 @@
-import { EventDto } from '../api/backendTypes';
-import { CatalogEvent, SearchResult } from '../types/events';
-import { getEventLifecyclePresentation } from '../features/events/eventLifecycle';
+import {
+  CatalogEventDto,
+  FilterOptionsDto,
+  SearchResultDto,
+  SearchResultsListDto,
+} from '../api/backendTypes';
+import { CatalogEvent, EventFilterOptions, SearchResult, SearchResultList } from '../types/events';
+import { formatCategoryLabel } from '../utils/eventLabels';
 
-const buildShortDescription = (description: string) => {
-  const normalized = description.replace(/\s+/g, ' ').trim();
-  return normalized.length > 132 ? `${normalized.slice(0, 129).trim()}...` : normalized;
-};
-
-export const mapEventDto = (dto: EventDto): CatalogEvent => ({
+export const mapCatalogEventDto = (dto: CatalogEventDto): CatalogEvent => ({
   id: dto.id,
   title: dto.title,
   description: dto.description || '',
-  city: dto.city,
+  placeName: dto.placeName || '',
+  city: dto.city || '',
   address: dto.address || '',
   startDate: dto.startDate,
   endDate: dto.endDate,
-  category: dto.category || 'inne',
+  category: formatCategoryLabel(dto.category),
+  organizerName: dto.organizerName || '',
+  sourceType: dto.sourceType || '',
   status: dto.status,
-  updateNotice: dto.updateNotice,
+  createdAt: dto.createdAt,
+  updatedAt: dto.updatedAt,
+  cancelReason: dto.cancelReason || null,
 });
 
-export const mapEventToSearchResult = (event: CatalogEvent): SearchResult => {
-  const lifecycle = getEventLifecyclePresentation(event.status, event.updateNotice);
+export const mapSearchResultDto = (dto: SearchResultDto): SearchResult => ({
+  eventId: dto.eventId,
+  name: dto.title,
+  shortDescription: dto.shortDescription || '',
+  startsAt: dto.startDate,
+  location: dto.location || '',
+  category: formatCategoryLabel(dto.category),
+});
+
+export const mapSearchResultsListDto = (dto: SearchResultsListDto): SearchResultList => {
+  const pageSize = Math.max(1, dto.pageSize);
 
   return {
-    eventId: event.id,
-    name: event.title,
-    shortDescription: buildShortDescription(event.description),
-    startsAt: event.startDate,
-    location: [event.address, event.city].filter(Boolean).join(', '),
-    category: event.category,
-    status: event.status,
-    lifecycleNotice: lifecycle.notice,
+    results: dto.results.map(mapSearchResultDto),
+    resultCount: dto.totalResults,
+    pageNumber: dto.pageNumber + 1,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil(dto.totalResults / pageSize)),
   };
 };
+
+export const mapFilterOptionsDto = (dto: FilterOptionsDto): EventFilterOptions => ({
+  categories: dto.categories,
+  locations: dto.locations,
+});
+
+export const mapCatalogEventToSearchResult = (event: CatalogEvent): SearchResult => ({
+  eventId: event.id,
+  name: event.title,
+  shortDescription: event.description,
+  startsAt: event.startDate,
+  location: [event.placeName, event.address, event.city].filter(Boolean).join(', '),
+  category: event.category,
+  status: event.status,
+  cancelReason: event.cancelReason,
+});

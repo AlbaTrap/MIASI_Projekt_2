@@ -30,6 +30,9 @@ public class UpdateSearchIndexService {
     }
     private SearchEventView toView(CatalogEventDto e) {
         String description = e.description() == null ? "" : (e.description().length() > 180 ? e.description().substring(0, 180) + "..." : e.description());
-        return new SearchEventView(e.id(), e.title(), description, e.startDate(), e.city(), e.address(), e.category().name(), e.status().name());
+        return new SearchEventView(e.id(), e.title(), description, e.startDate(), e.city(), locationText(e), e.category().name(), e.status().name());
+    }
+    private String locationText(CatalogEventDto e) {
+        return e.placeName() == null || e.placeName().isBlank() ? (e.address() == null ? "" : e.address()) : e.placeName();
     }
 }

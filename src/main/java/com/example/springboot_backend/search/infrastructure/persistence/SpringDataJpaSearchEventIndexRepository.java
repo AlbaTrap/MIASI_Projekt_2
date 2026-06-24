@@ -8,6 +8,6 @@ import java.util.UUID;
 public interface SpringDataJpaSearchEventIndexRepository extends JpaRepository<JpaSearchEventViewEntity, UUID> {
     @Query("select distinct e.category from JpaSearchEventViewEntity e where e.status = 'PUBLISHED'")
     List<String> findDistinctCategories();
-    @Query("select distinct e.city from JpaSearchEventViewEntity e where e.status = 'PUBLISHED'")
-    List<String> findDistinctCities();
+    @Query("select distinct e.location from JpaSearchEventViewEntity e where e.status = 'PUBLISHED'")
+    List<String> findDistinctLocations();
 }

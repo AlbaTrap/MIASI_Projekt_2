@@ -12,10 +12,11 @@ public class UserAccount {
     private final Instant registeredAt;
     private Instant activatedAt;
     private VerificationToken verificationToken;
+    private String phoneNumber;
 
     public UserAccount(UserAccountId id, EmailAddress email, PasswordHash passwordHash,
                        AccountStatus status, Instant registeredAt, Instant activatedAt,
-                       VerificationToken verificationToken) {
+                       VerificationToken verificationToken, String phoneNumber) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -23,11 +24,12 @@ public class UserAccount {
         this.registeredAt = registeredAt;
         this.activatedAt = activatedAt;
         this.verificationToken = verificationToken;
+        this.phoneNumber = phoneNumber;
     }
 
     public static UserAccount register(EmailAddress email, PasswordHash passwordHash, VerificationToken token) {
         return new UserAccount(UserAccountId.newId(), email, passwordHash,
-                AccountStatus.PENDING_CONFIRMATION, Instant.now(), null, token);
+                AccountStatus.PENDING_CONFIRMATION, Instant.now(), null, token, null);
     }
 
     public void confirmEmail(String tokenValue) {
@@ -52,6 +54,11 @@ public class UserAccount {
 
     public void delete() { status = AccountStatus.DELETED; }
 
+    public void changePhoneNumber(String newPhoneNumber) {
+        if (status == AccountStatus.DELETED) throw new BusinessException("Nie można zmienić numeru telefonu usuniętego konta");
+        phoneNumber = newPhoneNumber == null || newPhoneNumber.isBlank() ? null : newPhoneNumber.trim();
+    }
+
     public boolean active() { return status == AccountStatus.ACTIVE; }
 
     public UserAccountId id() { return id; }
@@ -61,4 +68,5 @@ public class UserAccount {
     public Instant registeredAt() { return registeredAt; }
     public Instant activatedAt() { return activatedAt; }
     public VerificationToken verificationToken() { return verificationToken; }
+    public String phoneNumber() { return phoneNumber; }
 }

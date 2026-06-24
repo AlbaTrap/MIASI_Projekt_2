@@ -9,6 +9,6 @@ public record SearchQuery(SearchPhrase phrase, SearchCriteria criteria, Sorting 
     }
     public boolean isEmpty() { return phrase.isBlank() && !hasFilters(); }
     public boolean hasFilters() {
-        return criteria.category() != null || criteria.city() != null || criteria.dateRange().from() != null || criteria.dateRange().to() != null;
+        return criteria.category() != null || criteria.location() != null || criteria.dateRange().from() != null || criteria.dateRange().to() != null;
     }
 }

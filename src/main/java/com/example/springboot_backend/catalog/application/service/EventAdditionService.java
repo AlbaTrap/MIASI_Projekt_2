@@ -33,7 +33,7 @@ public class EventAdditionService implements CatalogEventImportPort {
     public CatalogEventDto addEvent(AddEventCommand c) {
         CatalogEvent event = factory.create(
                 new EventName(c.title()), new EventDescription(c.description()), new EventDate(c.startDate(), c.endDate()),
-                Location.of(c.city(), c.address()), EventCategory.fromText(c.category()),
+                Location.of(c.city(), c.placeName(), c.address()), EventCategory.fromText(c.category()),
                 new Organizer(c.organizerName(), c.organizerWebsite()), EventSource.administrator()
         );
         validator.validate(event);
@@ -47,7 +47,7 @@ public class EventAdditionService implements CatalogEventImportPort {
     public CatalogEventDto addImportedEvent(AddImportedEventCommand c) {
         CatalogEvent event = factory.create(
                 new EventName(c.title()), new EventDescription(c.description()), new EventDate(c.startDate(), c.endDate()),
-                Location.of(c.city(), c.address()), EventCategory.fromText(c.category()),
+                Location.of(c.city(), c.placeName(), c.address()), EventCategory.fromText(c.category()),
                 new Organizer(c.organizerName(), ""), EventSource.scraper(c.sourceAddress())
         );
         validator.validate(event);

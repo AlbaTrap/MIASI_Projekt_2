@@ -1,21 +1,30 @@
-import { EventDto } from './backendTypes';
+import { CatalogEventDto, FilterOptionsDto, SearchResultsListDto } from './backendTypes';
 import { apiRequest } from './httpClient';
 
-type SearchEventsParams = {
+export type SearchEventsParams = {
+  phrase?: string;
   category?: string;
-  city?: string;
+  location?: string;
   from?: string;
   to?: string;
+  sortBy?: string;
+  direction?: string;
+  page?: number;
+  size?: number;
 };
 
 export const eventsApi = {
   searchEvents(params: SearchEventsParams = {}) {
-    return apiRequest<EventDto[]>('/events', {
+    return apiRequest<SearchResultsListDto>('/events', {
       query: params,
     });
   },
 
+  getEventFilters() {
+    return apiRequest<FilterOptionsDto>('/events/filters');
+  },
+
   getEventDetails(eventId: string) {
-    return apiRequest<EventDto>(`/events/${eventId}`);
+    return apiRequest<CatalogEventDto>(`/catalog/events/${eventId}`);
   },
 };

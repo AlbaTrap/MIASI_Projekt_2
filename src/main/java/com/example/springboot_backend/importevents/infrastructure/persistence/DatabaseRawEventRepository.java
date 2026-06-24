@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Repository("importEventsRawEventRepository")
 public class DatabaseRawEventRepository implements RawEventRepository {
     private final SpringDataJpaRawEventRepository repository;
     public DatabaseRawEventRepository(SpringDataJpaRawEventRepository repository) { this.repository = repository; }

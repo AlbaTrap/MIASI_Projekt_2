@@ -25,15 +25,18 @@ Content-Type: application/json
 
 ### Fetch raw events from demo scraper
 POST http://localhost:8080/api/admin/import/events/fetch
+Authorization: Bearer admin-token
 
 ### Normalize raw events and add them to catalog
 POST http://localhost:8080/api/admin/import/events/normalize
+Authorization: Bearer admin-token
 
 ### Rebuild search index from catalog
 POST http://localhost:8080/api/search-index/rebuild
+Authorization: Bearer admin-token
 
 ### Search events
-GET http://localhost:8080/api/events?phrase=koncert&city=Wrocław&sortBy=DATE&direction=ASC&page=0&size=10
+GET http://localhost:8080/api/events?phrase=koncert&location=Teatr%20Polski&sortBy=DATE&direction=ASC&page=0&size=10
 
 ### Get filters
 GET http://localhost:8080/api/events/filters
@@ -43,6 +46,7 @@ GET http://localhost:8080/api/catalog/events
 
 ### Add manual catalog event as draft
 POST http://localhost:8080/api/admin/events
+Authorization: Bearer admin-token
 Content-Type: application/json
 
 {
@@ -60,6 +64,12 @@ Content-Type: application/json
 
 ### Publish event
 POST http://localhost:8080/api/admin/events/ID_WYDARZENIA/publish
+Authorization: Bearer admin-token
+
+### Delete event
+DELETE http://localhost:8080/api/admin/events/ID_WYDARZENIA
+Authorization: Bearer admin-token
 
 ### Add published event to search index
 POST http://localhost:8080/api/search-index/events/ID_WYDARZENIA
+Authorization: Bearer admin-token

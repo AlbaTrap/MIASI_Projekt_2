@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 import { accountApi } from '../../api/accountApi';
@@ -10,6 +10,7 @@ import { LoadingState } from '../../components/ui/LoadingState';
 import { mapUserDto } from '../../mappers/accountMapper';
 import { useAuth } from '../../state/authStore';
 import { SessionStatus, UserAccount } from '../../types/account';
+import { formatDateTime } from '../../utils/date';
 
 const sessionStatusLabels: Record<SessionStatus, string> = {
   ACTIVE: 'Aktywna',
@@ -25,8 +26,12 @@ export function AccountPage() {
   const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneMessage, setPhoneMessage] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteSubmitting, setIsDeleteSubmitting] = useState(false);
+  const [isPhoneSubmitting, setIsPhoneSubmitting] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
 
@@ -45,7 +50,9 @@ export function AccountPage() {
         const data = await accountApi.me(session.accessToken);
 
         if (active) {
-          setAccount(mapUserDto(data));
+          const mappedAccount = mapUserDto(data);
+          setAccount(mappedAccount);
+          setPhoneNumber(mappedAccount.phoneNumber || '');
         }
       } catch (caughtError) {
         if (active) {
@@ -126,6 +133,30 @@ export function AccountPage() {
     }
   };
 
+  const handlePhoneNumberSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!session?.accessToken) {
+      return;
+    }
+
+    try {
+      setIsPhoneSubmitting(true);
+      setPhoneMessage('');
+      setPhoneError('');
+      await accountApi.changePhoneNumber(session.accessToken, { phoneNumber });
+      const data = await accountApi.me(session.accessToken);
+      const mappedAccount = mapUserDto(data);
+      setAccount(mappedAccount);
+      setPhoneNumber(mappedAccount.phoneNumber || '');
+      setPhoneMessage(mappedAccount.phoneNumber ? 'Numer telefonu został zapisany.' : 'Numer telefonu został usunięty.');
+    } catch (caughtError) {
+      setPhoneError(caughtError instanceof Error ? caughtError.message : 'Nie udało się zapisać numeru telefonu.');
+    } finally {
+      setIsPhoneSubmitting(false);
+    }
+  };
+
   return (
     <main className="page-shell narrow-page">
       <section className="panel">
@@ -144,6 +175,33 @@ export function AccountPage() {
           <AccountStatusBadge status={account.status} />
           <p>E-mail: {account.email}</p>
           <p>Status: {accountStatusLabels[account.status]}</p>
+          <p>Telefon do SMS: {account.phoneNumber || 'Brak numeru'}</p>
+          <p>Data rejestracji: {formatDateTime(account.registeredAt)}</p>
+          {account.activatedAt ? <p>Data aktywacji: {formatDateTime(account.activatedAt)}</p> : null}
+        </section>
+      ) : null}
+
+      {account ? (
+        <section className="panel">
+          <h2>Powiadomienia SMS</h2>
+          <form className="button-column" onSubmit={handlePhoneNumberSubmit}>
+            <label className="text-field" htmlFor="phone-number">
+              <span>Numer telefonu</span>
+              <input
+                autoComplete="tel"
+                id="phone-number"
+                onChange={(event) => setPhoneNumber(event.target.value)}
+                placeholder="+48 500 600 700"
+                type="tel"
+                value={phoneNumber}
+              />
+            </label>
+            {phoneMessage ? <p className="form-success">{phoneMessage}</p> : null}
+            {phoneError ? <p className="form-error">{phoneError}</p> : null}
+            <AppButton disabled={isPhoneSubmitting} type="submit">
+              Zapisz numer
+            </AppButton>
+          </form>
         </section>
       ) : null}
 

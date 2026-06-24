@@ -48,4 +48,11 @@ public class EventPublicationService {
         publisher.publish(new EventArchivedEvent(saved.id().value(), Instant.now()));
         return CatalogEventMapper.toDto(saved);
     }
+    @Transactional
+    public void delete(EventIdCommand c) {
+        var eventId = CatalogEventId.of(c.eventId());
+        if (!repository.existsById(eventId)) throw new NotFoundException("Wydarzenie nie istnieje");
+        repository.delete(eventId);
+        publisher.publish(new EventDeletedEvent(c.eventId(), Instant.now()));
+    }
 }

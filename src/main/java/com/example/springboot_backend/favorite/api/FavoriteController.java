@@ -1,4 +1,5 @@
 package com.example.springboot_backend.favorite.api;
+import com.example.springboot_backend.catalog.application.dto.CatalogEventDto;
 import com.example.springboot_backend.favorite.application.command.AddEventToFavoritesCommand;
 import com.example.springboot_backend.favorite.application.command.RemoveFavoriteCommand;
 import com.example.springboot_backend.favorite.application.dto.FavoriteEventDto;
@@ -17,4 +18,5 @@ public class FavoriteController {
     @PostMapping("/{eventId}") public ApiResponse<FavoriteEventDto> add(@PathVariable UUID eventId, @RequestHeader(value="Authorization", required=false) String auth) { return ApiResponse.ok(service.add(new AddEventToFavoritesCommand(AuthHeader.extractToken(auth), eventId))); }
     @DeleteMapping("/{eventId}") public ApiResponse<Void> remove(@PathVariable UUID eventId, @RequestHeader(value="Authorization", required=false) String auth) { service.remove(new RemoveFavoriteCommand(AuthHeader.extractToken(auth), eventId)); return ApiResponse.ok("Usunięto z ulubionych"); }
     @GetMapping public ApiResponse<List<FavoriteEventDto>> mine(@RequestHeader(value="Authorization", required=false) String auth) { return ApiResponse.ok(service.mine(AuthHeader.extractToken(auth))); }
+    @GetMapping("/events") public ApiResponse<List<CatalogEventDto>> events(@RequestHeader(value="Authorization", required=false) String auth) { return ApiResponse.ok(service.events(AuthHeader.extractToken(auth))); }
 }

@@ -24,7 +24,7 @@ public class DatabaseEventIndexRepository implements EventIndexRepository {
     @Override public SearchEventView saveView(SearchEventView view) { return toDomain(repository.save(toJpa(view))); }
     @Override public void remove(UUID eventId) { repository.deleteById(eventId); }
     @Override public List<String> getCategories() { return repository.findDistinctCategories().stream().filter(v -> v != null && !v.isBlank()).sorted(String.CASE_INSENSITIVE_ORDER).toList(); }
-    @Override public List<String> getLocations() { return repository.findDistinctCities().stream().filter(v -> v != null && !v.isBlank()).sorted(String.CASE_INSENSITIVE_ORDER).toList(); }
+    @Override public List<String> getLocations() { return repository.findDistinctLocations().stream().filter(v -> v != null && !v.isBlank()).sorted(String.CASE_INSENSITIVE_ORDER).toList(); }
     @Override public void clear() { repository.deleteAll(); }
     private JpaSearchEventViewEntity toJpa(SearchEventView v) { return new JpaSearchEventViewEntity(v.eventId(), v.title(), v.shortDescription(), v.startDate(), v.city(), v.location(), v.category(), v.status()); }
     private SearchEventView toDomain(JpaSearchEventViewEntity e) { return new SearchEventView(e.getEventId(), e.getTitle(), e.getShortDescription(), e.getStartDate(), e.getCity(), e.getLocation(), e.getCategory(), e.getStatus()); }

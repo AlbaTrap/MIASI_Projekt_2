@@ -21,12 +21,15 @@ const formatDateBadge = (value: string) => {
 
 export function EventCard({ context = 'catalog', event }: EventCardProps) {
   const dateBadge = formatDateBadge(event.startsAt);
-  const lifecycle = getEventLifecyclePresentation(event.status, event.lifecycleNotice);
-  const showLifecycleLabel = context === 'saved' || event.status === 'UPDATED';
+  const lifecycle = getEventLifecyclePresentation(event.status);
+  const showLifecycle = context === 'saved' && event.status && event.status !== 'PUBLISHED';
 
   return (
-    <article className={`event-card ${lifecycle.className}`}>
-      <EventCategoryVisual category={event.category} lifecycleTone={lifecycle.visualTone} />
+    <article className={`event-card ${showLifecycle ? lifecycle.className : ''}`}>
+      <EventCategoryVisual
+        category={event.category}
+        lifecycleTone={showLifecycle ? lifecycle.visualTone : 'normal'}
+      />
 
       <div className="event-card-content">
         <div className="event-card-topline">
@@ -37,9 +40,12 @@ export function EventCard({ context = 'catalog', event }: EventCardProps) {
           </time>
         </div>
 
-        {showLifecycleLabel ? <strong className="event-lifecycle-label">{lifecycle.label}</strong> : null}
+        {showLifecycle ? <strong className="event-lifecycle-label">{lifecycle.label}</strong> : null}
         <h2>{event.name}</h2>
-        {lifecycle.notice ? <p className="event-lifecycle-notice">{lifecycle.notice}</p> : null}
+        {showLifecycle && lifecycle.notice ? <p className="event-lifecycle-notice">{lifecycle.notice}</p> : null}
+        {showLifecycle && event.status === 'CANCELLED' && event.cancelReason ? (
+          <p className="event-lifecycle-notice">Powód anulowania: {event.cancelReason}</p>
+        ) : null}
         <p>{event.shortDescription}</p>
         <p className="event-card-location">{event.location}</p>
 

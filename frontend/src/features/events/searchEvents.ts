@@ -1,5 +1,5 @@
 import { CatalogEvent, SearchQuery, SearchResultList, SearchSortField } from '../../types/events';
-import { mapEventToSearchResult } from '../../mappers/eventMapper';
+import { mapCatalogEventToSearchResult } from '../../mappers/eventMapper';
 import { normalizeText } from '../../utils/text';
 import { isVisibleInCatalog } from './eventLifecycle';
 
@@ -68,7 +68,7 @@ export const searchEvents = (events: CatalogEvent[], query: SearchQuery): Search
   const start = (pageNumber - 1) * pageSize;
 
   return {
-    results: matched.slice(start, start + pageSize).map(mapEventToSearchResult),
+    results: matched.slice(start, start + pageSize).map(mapCatalogEventToSearchResult),
     resultCount,
     pageNumber,
     pageSize,

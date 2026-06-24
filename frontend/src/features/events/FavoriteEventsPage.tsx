@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { eventsApi } from '../../api/eventsApi';
 import { favoritesApi } from '../../api/favoritesApi';
 import { EventCard } from '../../components/events/EventCard';
 import { AppButton } from '../../components/ui/AppButton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingState } from '../../components/ui/LoadingState';
-import { mapEventDto, mapEventToSearchResult } from '../../mappers/eventMapper';
+import { mapCatalogEventDto, mapCatalogEventToSearchResult } from '../../mappers/eventMapper';
 import { useAuth } from '../../state/authStore';
 import { CatalogEvent } from '../../types/events';
 import { isVisibleInSavedEvents } from './eventLifecycle';
@@ -30,13 +29,10 @@ export function FavoriteEventsPage() {
       try {
         setIsLoading(true);
         setError('');
-        const favorites = await favoritesApi.getFavorites(session.accessToken);
-        const favoriteEvents = await Promise.all(
-          favorites.map((favorite) => eventsApi.getEventDetails(favorite.eventId)),
-        );
+        const favoriteEvents = await favoritesApi.getFavoriteEvents(session.accessToken);
 
         if (active) {
-          setEvents(favoriteEvents.map(mapEventDto));
+          setEvents(favoriteEvents.map(mapCatalogEventDto));
         }
       } catch (caughtError) {
         if (active) {
@@ -57,7 +53,7 @@ export function FavoriteEventsPage() {
   }, [session?.accessToken]);
 
   const visibleEvents = useMemo(
-    () => events.filter(isVisibleInSavedEvents).map(mapEventToSearchResult),
+    () => events.filter(isVisibleInSavedEvents).map(mapCatalogEventToSearchResult),
     [events],
   );
 
@@ -82,7 +78,7 @@ export function FavoriteEventsPage() {
           <p className="eyebrow">Twoje miejsca</p>
           <h1>Ulubione wydarzenia</h1>
           <p>
-            Tu zobaczysz wydarzenia zapisane jako ulubione, również wtedy, gdy zostaną anulowane albo
+            Tu zobaczysz wydarzenia dodane do ulubionych, również wtedy, gdy zostaną anulowane albo
             zarchiwizowane.
           </p>
         </div>

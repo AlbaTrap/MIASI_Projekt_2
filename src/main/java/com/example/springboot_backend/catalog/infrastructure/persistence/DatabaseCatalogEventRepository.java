@@ -25,7 +25,7 @@ public class DatabaseCatalogEventRepository implements CatalogEventRepository {
     }
     private CatalogEvent toDomain(JpaCatalogEventEntity e) {
         return new CatalogEvent(CatalogEventId.of(e.getId()), new EventName(e.getTitle()), new EventDescription(e.getDescription()), new EventDate(e.getStartDate(), e.getEndDate()),
-                Location.of(e.getCity(), e.getAddress()), e.getCategory(), new Organizer(e.getOrganizerName(), e.getOrganizerWebsite()), new EventSource(e.getSourceType(), e.getSourceAddress()),
+                new Location(e.getPlaceName(), new Address(e.getAddress(), "", e.getCity()), null), e.getCategory(), new Organizer(e.getOrganizerName(), e.getOrganizerWebsite()), new EventSource(e.getSourceType(), e.getSourceAddress()),
                 e.getStatus(), e.getCreatedAt(), e.getUpdatedAt(), e.getCancelReason());
     }
 }

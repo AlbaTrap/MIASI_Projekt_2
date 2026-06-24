@@ -7,6 +7,7 @@ import { RegisterPage } from './features/account/RegisterPage';
 import { EventCatalogPage } from './features/events/EventCatalogPage';
 import { EventDetailsPage } from './features/events/EventDetailsPage';
 import { FavoriteEventsPage } from './features/events/FavoriteEventsPage';
+import { NotificationsPage } from './features/notifications/NotificationsPage';
 import { useAuth } from './state/authStore';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <nav className="main-nav" aria-label="Główna nawigacja">
           <NavLink to="/">Wydarzenia</NavLink>
           {isAuthenticated ? <NavLink to="/favorites">Ulubione</NavLink> : null}
+          {isAuthenticated ? <NavLink to="/notifications">Powiadomienia</NavLink> : null}
           {isAuthenticated ? <NavLink to="/account">Konto</NavLink> : <NavLink to="/login">Zaloguj</NavLink>}
         </nav>
       </header>
@@ -30,6 +32,7 @@ export default function App() {
         <Route element={<EventCatalogPage />} path="/events" />
         <Route element={<EventDetailsPage />} path="/events/:eventId" />
         <Route element={<FavoriteEventsPage />} path="/favorites" />
+        <Route element={<NotificationsPage />} path="/notifications" />
         <Route element={<LoginPage />} path="/login" />
         <Route element={<RegisterPage />} path="/register" />
         <Route element={<ConfirmEmailPage />} path="/confirm-email" />

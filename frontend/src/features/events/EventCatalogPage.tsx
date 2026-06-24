@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { eventsApi } from '../../api/eventsApi';
 import { EventCard } from '../../components/events/EventCard';
@@ -6,23 +6,32 @@ import { AppButton } from '../../components/ui/AppButton';
 import { AppTextInput } from '../../components/ui/AppTextInput';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingState } from '../../components/ui/LoadingState';
-import { mapEventDto } from '../../mappers/eventMapper';
-import { CatalogEvent, SearchSortDirection, SearchSortField } from '../../types/events';
-import { isDateInputValid } from '../../utils/date';
+import { mapFilterOptionsDto, mapSearchResultsListDto } from '../../mappers/eventMapper';
+import { EventFilterOptions, SearchResultList, SearchSortDirection, SearchSortField } from '../../types/events';
+import { isDateInputValid, toEndOfDayIso, toStartOfDayIso } from '../../utils/date';
 import { CatalogFilterPanel } from './CatalogFilterPanel';
-import { isVisibleInCatalog } from './eventLifecycle';
-import { searchEvents } from './searchEvents';
 
 const PAGE_SIZE = 5;
 
+const emptyResultList: SearchResultList = {
+  results: [],
+  resultCount: 0,
+  pageNumber: 1,
+  pageSize: PAGE_SIZE,
+  totalPages: 1,
+};
+
 export function EventCatalogPage() {
-  const [events, setEvents] = useState<CatalogEvent[]>([]);
+  const [resultList, setResultList] = useState<SearchResultList>(emptyResultList);
+  const [filterOptions, setFilterOptions] = useState<EventFilterOptions>({
+    categories: [],
+    locations: [],
+  });
   const [phrase, setPhrase] = useState('');
   const [category, setCategory] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [location, setLocation] = useState('');
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [sortField, setSortField] = useState<SearchSortField>('DATE');
   const [sortDirection, setSortDirection] = useState<SearchSortDirection>('ASC');
   const [pageNumber, setPageNumber] = useState(1);
@@ -30,21 +39,64 @@ export function EventCatalogPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const hasDateError = !isDateInputValid(dateFrom) || !isDateInputValid(dateTo);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadFilters = async () => {
+      try {
+        const data = await eventsApi.getEventFilters();
+
+        if (active) {
+          setFilterOptions(mapFilterOptionsDto(data));
+        }
+      } catch (caughtError) {
+        if (active) {
+          setError(caughtError instanceof Error ? caughtError.message : 'Nie udało się pobrać filtrów.');
+        }
+      }
+    };
+
+    void loadFilters();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   useEffect(() => {
     let active = true;
 
     const loadEvents = async () => {
+      if (hasDateError) {
+        setResultList(emptyResultList);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         setIsLoading(true);
         setError('');
-        const data = await eventsApi.searchEvents();
+        const data = await eventsApi.searchEvents({
+          phrase,
+          category,
+          location,
+          from: toStartOfDayIso(dateFrom),
+          to: toEndOfDayIso(dateTo),
+          sortBy: sortField,
+          direction: sortDirection,
+          page: pageNumber - 1,
+          size: PAGE_SIZE,
+        });
 
         if (active) {
-          setEvents(data.map(mapEventDto));
+          setResultList(mapSearchResultsListDto(data));
         }
       } catch (caughtError) {
         if (active) {
           setError(caughtError instanceof Error ? caughtError.message : 'Nie udało się pobrać wydarzeń.');
+          setResultList(emptyResultList);
         }
       } finally {
         if (active) {
@@ -58,44 +110,7 @@ export function EventCatalogPage() {
     return () => {
       active = false;
     };
-  }, []);
-
-  const availableEvents = useMemo(
-    () => events.filter(isVisibleInCatalog),
-    [events],
-  );
-
-  const availableCategories = useMemo(
-    () =>
-      Array.from(new Set(availableEvents.map((event) => event.category)))
-        .filter(Boolean)
-        .sort((left, right) => left.localeCompare(right, 'pl')),
-    [availableEvents],
-  );
-
-  const availableLocations = useMemo(
-    () =>
-      Array.from(new Set(availableEvents.map((event) => event.address).filter(Boolean)))
-        .sort((left, right) => left.localeCompare(right, 'pl')),
-    [availableEvents],
-  );
-
-  const resultList = useMemo(
-    () =>
-      searchEvents(events, {
-        phrase,
-        category,
-        dateFrom: isDateInputValid(dateFrom) ? dateFrom : '',
-        dateTo: isDateInputValid(dateTo) ? dateTo : '',
-        location,
-        selectedLocations,
-        sortField,
-        sortDirection,
-        pageNumber,
-        pageSize: PAGE_SIZE,
-      }),
-    [category, dateFrom, dateTo, events, location, pageNumber, phrase, selectedLocations, sortDirection, sortField],
-  );
+  }, [category, dateFrom, dateTo, hasDateError, location, pageNumber, phrase, sortDirection, sortField]);
 
   const resetPage = () => setPageNumber(1);
 
@@ -105,7 +120,6 @@ export function EventCatalogPage() {
     setDateFrom('');
     setDateTo('');
     setLocation('');
-    setSelectedLocations([]);
     setSortField('DATE');
     setSortDirection('ASC');
     setPageNumber(1);
@@ -131,37 +145,28 @@ export function EventCatalogPage() {
     resetPage();
   };
 
-  const handleSelectedLocationsChange = (value: string[]) => {
-    setSelectedLocations(value);
-    resetPage();
-  };
-
   const handleSortChange = (field: SearchSortField, direction: SearchSortDirection) => {
     setSortField(field);
     setSortDirection(direction);
     resetPage();
   };
 
-  const hasDateError = !isDateInputValid(dateFrom) || !isDateInputValid(dateTo);
-  const activeFilterCount =
-    [category, dateFrom, dateTo, location].filter(Boolean).length + (selectedLocations.length > 0 ? 1 : 0);
+  const activeFilterCount = [category, dateFrom, dateTo, location].filter(Boolean).length;
 
   const renderFilters = (idPrefix: string) => (
     <CatalogFilterPanel
-      availableCategories={availableCategories}
-      availableLocations={availableLocations}
+      availableCategories={filterOptions.categories}
+      availableLocations={filterOptions.locations}
       category={category}
       dateFrom={dateFrom}
       dateTo={dateTo}
       idPrefix={idPrefix}
       location={location}
-      selectedLocations={selectedLocations}
       onCategoryChange={handleCategoryChange}
       onClearFilters={clearFilters}
       onDateFromChange={handleDateFromChange}
       onDateToChange={handleDateToChange}
       onLocationChange={handleLocationChange}
-      onSelectedLocationsChange={handleSelectedLocationsChange}
       onSortChange={handleSortChange}
       sortDirection={sortDirection}
       sortField={sortField}
@@ -250,14 +255,14 @@ export function EventCatalogPage() {
 
           <div className="pagination">
             <AppButton
-              disabled={resultList.pageNumber <= 1 || hasDateError}
+              disabled={resultList.pageNumber <= 1 || hasDateError || isLoading}
               onClick={() => setPageNumber((current) => Math.max(1, current - 1))}
               variant="secondary"
             >
               Poprzednia strona
             </AppButton>
             <AppButton
-              disabled={resultList.pageNumber >= resultList.totalPages || hasDateError}
+              disabled={resultList.pageNumber >= resultList.totalPages || hasDateError || isLoading}
               onClick={() => setPageNumber((current) => current + 1)}
               variant="secondary"
             >

@@ -1,4 +1,4 @@
-import { FavoriteEventDto } from './backendTypes';
+import { CatalogEventDto, FavoriteEventDto } from './backendTypes';
 import { apiRequest } from './httpClient';
 
 export const favoritesApi = {
@@ -18,6 +18,12 @@ export const favoritesApi = {
 
   getFavorites(token: string) {
     return apiRequest<FavoriteEventDto[]>('/favorites', {
+      token,
+    });
+  },
+
+  getFavoriteEvents(token: string) {
+    return apiRequest<CatalogEventDto[]>('/favorites/events', {
       token,
     });
   },
